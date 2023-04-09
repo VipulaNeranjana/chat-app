@@ -1,6 +1,6 @@
-package lk.vipula.dep10.client.model;
+package lk.vipula.dep10.shared.model;
 
-import lk.vipula.dep10.client.enumarations.MessageHeader;
+import lk.vipula.dep10.shared.enumaration.MessageHeader;
 
 import java.io.Serializable;
 

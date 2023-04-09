@@ -7,8 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.vipula.dep10.client.enumarations.MessageHeader;
-import lk.vipula.dep10.client.model.Message;
+import lk.vipula.dep10.shared.enumaration.MessageHeader;
+import lk.vipula.dep10.shared.model.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -35,6 +35,8 @@ public class ClientViewController {
     public void initialize(){
         connectServer();
         readServerResponse();
+
+        Platform.runLater(() -> closeSocketOnStageCloseRequest());
     }
 
     private void connectServer(){
@@ -75,7 +77,7 @@ public class ClientViewController {
                 e.printStackTrace();
                 new Alert(Alert.AlertType.ERROR,"failed to get response from server!").showAndWait();
             }
-        });
+        }).start();
 
     }
     private void closeSocketOnStageCloseRequest(){

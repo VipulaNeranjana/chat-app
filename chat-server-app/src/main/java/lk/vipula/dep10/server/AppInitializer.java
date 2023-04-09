@@ -1,7 +1,7 @@
 package lk.vipula.dep10.server;
 
-import lk.vipula.dep10.server.enumaration.MessageHeader;
-import lk.vipula.dep10.server.model.Message;
+import lk.vipula.dep10.shared.enumaration.MessageHeader;
+import lk.vipula.dep10.shared.model.Message;
 import lk.vipula.dep10.server.model.User;
 
 import java.io.EOFException;
@@ -21,10 +21,13 @@ public class AppInitializer {
         ServerSocket serverSocket = new ServerSocket(5050);
 
         while (true){
+            System.out.println("waiting for request..");
+
             Socket localSocket = serverSocket.accept();
             User user = new User(localSocket);
-            System.out.println(user.getRemoteAddress());
             userList.add(user);
+
+            System.out.println(user.getRemoteAddress());
 
             new Thread(() -> {
                 try {
@@ -36,7 +39,7 @@ public class AppInitializer {
                     while (true){
                         Message message = (Message) objectInputStream.readObject();
                         if(message.getMessageHeader() == MessageHeader.MSG){
-                            chatHistory += String.format("%s , %s \n",user.getRemoteAddress(), message.getMessageBody());
+                            chatHistory += String.format("%s : %s \n",user.getRemoteAddress(), message.getMessageBody());
                             broadCastChatHistory();
                         } else if (message.getMessageHeader() == MessageHeader.EXIT) {
                             removeUser(user);
@@ -64,7 +67,8 @@ public class AppInitializer {
             new Thread(() -> {
                 try {
                     ObjectOutputStream objectOutputStream = user.getObjectOutputStream();
-                    objectOutputStream.writeObject(new Message(MessageHeader.MSG,chatHistory));
+                    Message message = new Message(MessageHeader.MSG, chatHistory);
+                    objectOutputStream.writeObject(message);
                     objectOutputStream.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -90,8 +94,6 @@ public class AppInitializer {
                 }
             }).start();
         }
-
-
     }
 
     private static void restoreChatHistory(User user){

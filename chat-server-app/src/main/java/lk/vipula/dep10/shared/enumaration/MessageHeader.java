@@ -1,4 +1,4 @@
-package lk.vipula.dep10.server.enumaration;
+package lk.vipula.dep10.shared.enumaration;
 
 public enum MessageHeader {
     MSG,USERS,EXIT
