@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lk.vipula.dep10.client.controller.LoginViewController;
 
 import java.io.IOException;
 
@@ -15,9 +16,20 @@ public class ClientAppInitializer extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        primaryStage.setScene(new Scene(new FXMLLoader(getClass().getResource("/view/ClientView.fxml")).load()));
-        primaryStage.setTitle("Chat App");
-        primaryStage.show();
-        primaryStage.centerOnScreen();
+
+        checkUserValidity(primaryStage);
+
+    }
+
+    private void checkUserValidity(Stage stage){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+            stage.show();
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

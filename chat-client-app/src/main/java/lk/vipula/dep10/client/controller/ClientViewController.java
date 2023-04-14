@@ -3,10 +3,14 @@ package lk.vipula.dep10.client.controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import lk.vipula.dep10.shared.enumaration.MessageHeader;
 import lk.vipula.dep10.shared.model.Message;
 
@@ -22,47 +26,42 @@ public class ClientViewController {
     public AnchorPane root;
     @FXML
     private Button btnSend;
-
     @FXML
     private TextArea txtShowChat;
-
     @FXML
     private TextField txtType;
-
     private Socket socket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     public void initialize(){
-        connectServer();
-        readServerResponse();
 
-        Platform.runLater(() -> closeSocketOnStageCloseRequest());
+        Platform.runLater(() -> {
+
+            readServerResponse();
+            closeSocketOnStageCloseRequest();
+
+        });
     }
+    public void initData(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
 
-    private void connectServer(){
-        try {
-            socket = new Socket("127.0.0.1", 5050);
+        this.socket = socket;
+        this.objectInputStream = objectInputStream;
+        this.objectOutputStream = objectOutputStream;
 
-            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectOutputStream.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR,"failed to connect to the server").showAndWait();
-            Platform.exit();
-        }
     }
     private void readServerResponse(){
+
         new Thread(() -> {
             try {
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
 
                 while (true){
+                    System.out.println(socket);
                     Message message = (Message) objectInputStream.readObject();
 
                     if(message.getMessageHeader() == MessageHeader.USERS){
                         ArrayList<String> userList = (ArrayList<String>) message.getMessageBody();
                         Platform.runLater(() -> {
+                            System.out.println(userList);
                             txtUsers.getItems().clear();
                             txtUsers.getItems().addAll(userList);
                         });
@@ -81,6 +80,7 @@ public class ClientViewController {
 
     }
     private void closeSocketOnStageCloseRequest(){
+
         btnSend.getScene().getWindow().setOnCloseRequest(event -> {
             try {
                 objectOutputStream.writeObject(new Message(MessageHeader.EXIT,null));
@@ -90,8 +90,6 @@ public class ClientViewController {
             }
         });
     }
-
-
     @FXML
     void btnSendOnAction(ActionEvent event) {
         try {
@@ -105,8 +103,6 @@ public class ClientViewController {
         }
 
     }
-
-
     public void rootOnKeyPressed(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER) btnSend.fire();
     }
