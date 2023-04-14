@@ -146,19 +146,6 @@ public class AppInitializer {
         return false;
     }
 
-    private static boolean isValidMember(ServerSocket socket) throws Exception {
-        System.out.println("waiting for validity!");
-        Socket localSocket = socket.accept();
-        ObjectInputStream objectInputStream = new ObjectInputStream(localSocket.getInputStream());
-        Message message = (Message) objectInputStream.readObject();
-        if(message.getMessageHeader() == MessageHeader.VALIDITY){
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(localSocket.getOutputStream());
-            objectOutputStream.writeObject(new Message(MessageHeader.VALID,null));
-            objectOutputStream.flush();
-            return true;
-        }
-        return true;
-    }
     private static void removeUser(User user,String userLoggedIn) {
         userList.remove(user);
         loggedUsers.remove(userLoggedIn);
@@ -181,15 +168,15 @@ public class AppInitializer {
     }
 
     private static void broadCastUsers() {
-        ArrayList<String> ipAddressesList = new ArrayList<>();
-        for (User user : userList) {
-            ipAddressesList.add(user.getRemoteAddress());
+        ArrayList<String> loggedUserList = new ArrayList<>();
+        for (String user : loggedUsers) {
+            loggedUserList.add(user);
         }
         for (User user : userList) {
             new Thread(() -> {
                 try {
                     ObjectOutputStream objectOutputStream = user.getObjectOutputStream();
-                    Message message = new Message(MessageHeader.USERS, loggedUsers);
+                    Message message = new Message(MessageHeader.USERS, loggedUserList);
                     objectOutputStream.writeObject(message);
                     objectOutputStream.flush();
                 } catch (IOException e) {
@@ -199,13 +186,4 @@ public class AppInitializer {
         }
     }
 
-    private static void restoreChatHistory(User user){
-        try {
-            ObjectOutputStream objectOutputStream = user.getObjectOutputStream();
-            objectOutputStream.writeObject(new Message(MessageHeader.MSG,chatHistory));
-            objectOutputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

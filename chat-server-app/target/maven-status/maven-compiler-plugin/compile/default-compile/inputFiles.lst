@@ -1,4 +1,5 @@
-/home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/server/enumaration/MessageHeader.java
+/home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/server/model/Signing.java
+/home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/shared/enumaration/MessageHeader.java
 /home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/server/AppInitializer.java
-/home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/server/model/Message.java
+/home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/shared/model/Message.java
 /home/vipula/Documents/chat-app/chat-server-app/src/main/java/lk/vipula/dep10/server/model/User.java
